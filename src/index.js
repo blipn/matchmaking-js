@@ -119,13 +119,22 @@ export default {
       for (let index = 0; index < roomSize; index += 1) {
         players.push(this.status(queue).shift());
       }
-      const room = {
-        id: uuid(),
-        players
-      };
-      rooms.push(room);
-      return new Success(`Room created : ${JSON.stringify(room)}`);
+      return this.createRoom();
     }
     return new Error('Not enough players');
+  },
+
+  /**
+  * Create room
+  * @returns {Success} Success and room object in 'data'
+  */
+  createRoom() {
+    const id = uuid();
+    const room = {
+      id,
+      players: []
+    };
+    rooms.push(room);
+    return new Success(`Room created : ${JSON.stringify(room)}`, room);
   }
 };
