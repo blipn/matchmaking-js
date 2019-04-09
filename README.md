@@ -40,8 +40,6 @@ player1 : { queue: '*', id: 'player1', elo: 500 }
 // Kick the player1 from matchmaking
 mmjs.kickPlayer('player1')
 
-  * See the requested matchmaking queue
-  * or all matchmaking queues by requesting null
 // Get the default matchmaking queue
 mmjs.status()
 // Get the complete matchmaking array 
