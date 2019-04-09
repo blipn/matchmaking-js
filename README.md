@@ -9,7 +9,46 @@
 
 # Installation
 
+```bash
+$ npm install --save matchmaking-js
+```
+*NOT AVAILABLE YET ON NPM*
+
+```js
+var mmjs = require('matchmaking-js')
+mmjs.setConfig({
+      roomSize: 6, // default size for a room
+      defaultQueue: '*', // default queue id
+      errorLogs: true, // if you want error logs in a matchmaking.log file
+      infoLogs: true // if you want info logs in a matchmaking.log file
+    })
+```
+
 # Features
+```js
+// Add a user player1 with elo 500 to the matchmaking queue
+mmjs.addPlayer({ id: 'player1', elo: 500 }) 
+// Add a user player2 to the matchmaking queue
+mmjs.addPlayer({ id: 'player2'})
+// Add a user player3 to the matchmaking queue
+mmjs.addPlayer('player3');
+
+// Get the player1
+var player1 = mmjs.getPlayer('player1')
+player1 : { queue: '*', id: 'player1', elo: 500 }
+
+// Kick the player1 from matchmaking
+mmjs.kickPlayer('player1')
+
+  * See the requested matchmaking queue
+  * or all matchmaking queues by requesting null
+// Get the default matchmaking queue
+mmjs.status()
+// Get the complete matchmaking array 
+mmjs.status(null)
+// Get the requested matchmaking queue
+mmjs.status('myQueue')
+```
 
 # Links
 ✨ https://github.com/flexdinesh/npm-module-boilerplate
