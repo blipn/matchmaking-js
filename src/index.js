@@ -25,16 +25,17 @@ export default {
     if (typeof config.errorLogs !== 'undefined') errorLogs(config.errorLogs);
     if (typeof config.infoLogs !== 'undefined') infoLogs(config.infoLogs);
     for (let i = 0; i < maxRooms; i++) {
-      rooms[i] = {
-        name: i,
-        inGame: false,
-        players: [],
-      };
+      this.cleanRoom(i);
     }
     return new Success(`Config set to : ${JSON.stringify(config)}`);
   },
 
-  matchmaker(user) {
+  /**
+   * matchmake a player and add it to a room
+   * @param {string} user
+   */
+  // eslint-disable-next-line consistent-return
+  matchmake(user) {
     let found = false;
     for (let i = 0; i < maxRooms; i++) {
       // Va en priorité dans une room non vide et non en jeu
@@ -53,13 +54,24 @@ export default {
     } if (!found) {
       return false; // NO room available
     }
-    return false;
+    // return false;
   },
 
+  /**
+   * matchmaking with callback
+   * @param {callback} callback(bool)
+   * @param {string} user
+   */
   matchmaking(callback, user) {
-    callback(this.matchmaker(user));
+    callback(this.matchmake(user));
   },
 
+  /**
+  * Put a player in a room
+  * @param {number} roomNumber
+  * @param {string} user
+  * @returns {number} roomNumber OR False
+  */
   goToRoom(roomNumber, user) {
     if (rooms[roomNumber].players.length >= roomSize || rooms[roomNumber].inGame) {
       return false; // Cannot join room
@@ -69,37 +81,67 @@ export default {
   },
 
   /**
-  * See the requested player room
-  * or all rooms requesting null
-  * @param {string} playername
-  * @returns {Array} rooms
+  * display the requested room
+  * @param {number} room
+  * @returns {Object} room
   */
-  getRooms(playername) {
-    if (playername === null) {
-      return rooms;
-    }
-    return rooms.filter(i => i.id === playername);
+  getRoom(room) {
+    return rooms[room];
   },
 
   /**
-  * Find a player room
-  * @param {string} id (playername)
-  * @returns {object} player
+  * display all rooms
+  * @returns {Array} rooms
   */
-  findPlayer(id) {
-    return rooms.find(i => i.players.find(p => p === id) === id) || false;
+  getRooms() {
+    return rooms;
+  },
+
+  /**
+  * display the requested player's room
+  * @param {string} player
+  * @returns {object} player OR False
+  */
+  findPlayer(player) {
+    return rooms.find(i => i.players.find(p => p === player) === player) || false;
+  },
+
+  /**
+  * Clean a room (reset)
+  * @param {string} room (id)
+  * @returns {boolean} player
+  */
+  cleanRoom(room) {
+    rooms[room] = {
+      id: room,
+      inGame: false,
+      players: [],
+    };
+  },
+
+  /**
+  * Lock a room (set inGame to true)
+  * @param {string} room
+  * @returns {boolean} success
+  */
+  lockRoom(room) {
+    if (!rooms[room].inGame) {
+      rooms[room].inGame = true;
+      return true;
+    }
+    return false;
   },
 
   /**
   * Kick a player
-  * @param {string} id (playername)
+  * @param {string} player
   * @returns {boolean} success
   */
-  kickPlayer(id) {
+  kickPlayer(player) {
     let room = null;
-    room = this.findPlayer(id).name;
+    room = this.findPlayer(player).id;
     if (room !== null) {
-      const index = rooms[room].players.indexOf(id);
+      const index = rooms[room].players.indexOf(player);
       rooms[room].players.splice(index, 1);
       return true;
     }
